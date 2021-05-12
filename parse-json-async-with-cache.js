@@ -2,7 +2,8 @@ const cache = {};
 function parseJSONAsyncWithCache(json, callback) {
   const cached = cache[json];
   if (cached) {
-    callback(cacjed.err, cached.result);
+    // キャッシュに値が存在する場合でも、非同期的にコールバックを実行する
+    setTimeout(() => callback(cached.err, cached.result), 0);
     return;
   }
   parseJSONAsync(json, (err, result) => {
@@ -28,9 +29,9 @@ parseJSONAsyncWithCache(
     console.log("1回目の結果", err, result);
     // コールバックの中で２回目を実行
     parseJSONAsyncWithCache(
-      '{"message":"Heloo", "to", "World"}',
+      '{"message":"Heloo", "to": "World"}',
       (err, result) => {
-        console.log("2回目の結果");
+        console.log("2回目の結果", err, result);
       }
     );
     console.log("2回目の呼び出し完了");
