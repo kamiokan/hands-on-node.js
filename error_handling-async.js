@@ -1,11 +1,10 @@
 function parseJSONAsync(json, callback) {
-  try {
-    setTimeout(() => {
-      callback(JSON.parse(json));
-    }, 1000);
-  } catch (err) {
-    console.log("エラーをキャッチ", err);
-    callback({});
-  }
+  setTimeout(() => {
+    try {
+      callback(null, JSON.parse(json));
+    } catch (err) {
+      callback(err);
+    }
+  }, 1000);
 }
 parseJSONAsync("不正なJSON", (result) => console.log("parse結果", result));
