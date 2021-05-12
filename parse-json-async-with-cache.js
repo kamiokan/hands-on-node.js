@@ -2,8 +2,13 @@ const cache = {};
 function parseJSONAsyncWithCache(json, callback) {
   const cached = cache[json];
   if (cached) {
-    // キャッシュに値が存在する場合でも、非同期的にコールバックを実行する
-    setTimeout(() => callback(cached.err, cached.result), 0);
+    // Node.jsのみを対象としたコードの場合
+    process.nextTick(() => callback(cached.err, cached.result));
+    // ブラウザ環境でも動かすコードの場合
+    // 1. queueMicrotask()を使う
+    // queueMicrotask(() => callback(cached.err, cached.result));
+    // 2. Promiseを使う
+    // Promise.resolve().then(() => callback(cached.err, cached.result));
     return;
   }
   parseJSONAsync(json, (err, result) => {
